@@ -7,9 +7,15 @@ const WodCardList = (): JSX.Element => {
     return (
         <Grid container>
             {
-                Array.from(new Array(5)).map((index: number) => {
+                Array.from(new Array(5)).map((val, index: number) => {
                     return (
-                        <Grid item xs={12} key={index}>
+                        <Grid
+                            // eslint-disable-next-line react/no-array-index-key
+                            key={index}
+                            item
+                            xs={12}
+                            data-testid={`wodCard-${index}-container`}
+                        >
                             <WodCard />
                         </Grid>
                     );
