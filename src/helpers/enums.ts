@@ -3,7 +3,8 @@ export enum Modality {
     Weightlifting = 'weightlifting',
     Monostructural = 'monostructural'
 }
-export enum MovementTypes {
+
+export enum MovementPattern {
     Squat = 'squat',
     Hinge = 'hinge',
     VerticalPress = 'verticalPress',
@@ -14,6 +15,16 @@ export enum MovementTypes {
     OlyLift = 'olyLift',
     Monostructural = 'monostructural',
     Swing = 'swing'
+}
+
+export enum SquatType {
+    BackSquat = 'back squat',
+    FrontSquat = 'front squat',
+    OverheadSquat = 'overhead squat',
+    AirSquat = 'air squat',
+    Pistol = 'pistol',
+    Lunge = 'lunge',
+    StepUp = 'step up'
 }
 
 export enum TimeDomain {
