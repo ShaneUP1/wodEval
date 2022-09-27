@@ -3,7 +3,11 @@ import { Grid } from '@mui/material';
 
 import WodCard from '../cards/wodCard';
 
-const WodCardList = (): JSX.Element => {
+const WodCardList = ({
+    handleCardClick
+}: {
+    handleCardClick: () => void;
+}): JSX.Element => {
     return (
         <Grid container>
             {
@@ -16,7 +20,7 @@ const WodCardList = (): JSX.Element => {
                             xs={12}
                             data-testid={`wodCard-${index}-container`}
                         >
-                            <WodCard />
+                            <WodCard handleCardClick={handleCardClick} />
                         </Grid>
                     );
                 })
