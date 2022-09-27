@@ -13,7 +13,10 @@ const classes = {
 const StyledCard = styled(Card)(() => {
     return {
         [`&.${classes.card}`]: {
-            height: '100%'
+            height: '100%',
+            ':hover': {
+                cursor: 'pointer'
+            }
         }
     };
 });
