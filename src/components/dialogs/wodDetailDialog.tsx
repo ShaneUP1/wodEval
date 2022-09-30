@@ -20,11 +20,11 @@ import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
 import { getWodFromStorage } from '../../helpers/dataUtils';
 
 const movementRepInitialState = {
-    movementOne: null,
-    movementTwo: null,
-    movementThree: null,
-    movementFour: null,
-    movementFive: null
+    movementOne: 0,
+    movementTwo: 0,
+    movementThree: 0,
+    movementFour: 0,
+    movementFive: 0
 };
 
 const wodDetailsInitialState = JSON.stringify({
@@ -102,7 +102,23 @@ const WodDetailDialog = ({
             ...wodDetails,
             movementOne: {
                 type: selectedMovementOne,
-                reps: 0
+                reps: movementReps.movementOne
+            },
+            movementTwo: {
+                type: selectedMovementTwo,
+                reps: movementReps.movementTwo
+            },
+            movementThree: {
+                type: selectedMovementThree,
+                reps: movementReps.movementThree
+            },
+            movementFour: {
+                type: selectedMovementFour,
+                reps: movementReps.movementFour
+            },
+            movementFive: {
+                type: selectedMovementFive,
+                reps: movementReps.movementFive
             }
         });
         localStorage.setItem(`wod ${wodId}`, formattedWodDetails);
@@ -171,14 +187,14 @@ const WodDetailDialog = ({
                         <TextField
                             label='reps'
                             variant='filled'
+                            type='number'
                             size='small'
                             fullWidth
+                            value={movementReps?.movementOne}
                             onChange={(event): void => {
                                 setMovementReps({ ...movementReps, movementOne: Number(event.target.value) });
                             }}
-                        >
-                            {movementReps?.movementOne}
-                        </TextField>
+                        />
                     </Grid>
                     <Grid item xs={8}>
                         <Autocomplete
@@ -212,11 +228,137 @@ const WodDetailDialog = ({
                         <TextField
                             label='reps'
                             variant='filled'
+                            type='number'
                             size='small'
                             fullWidth
-                        >
-                            {movementReps?.movementTwo}
-                        </TextField>
+                            value={movementReps?.movementTwo}
+                            onChange={(event): void => {
+                                setMovementReps({ ...movementReps, movementTwo: Number(event.target.value) });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Autocomplete
+                            size='small'
+                            disabled={false}
+                            options={movementOptionsData}
+                            getOptionLabel={(option): string => {
+                                return option.label;
+                            }}
+                            onChange={(event, newValue): void => {
+                                setSelectedMovementThree(newValue);
+                            }}
+                            value={selectedMovementThree}
+                            renderInput={(params): JSX.Element => {
+                                return (
+                                    <TextField
+                                        {...params}
+                                        fullWidth
+                                        margin='none'
+                                        variant='filled'
+                                        inputProps={{
+                                            ...params.inputProps,
+                                            autoComplete: 'off'
+                                        }}
+                                    />
+                                );
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            label='reps'
+                            variant='filled'
+                            type='number'
+                            size='small'
+                            fullWidth
+                            value={movementReps?.movementThree}
+                            onChange={(event): void => {
+                                setMovementReps({ ...movementReps, movementThree: Number(event.target.value) });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Autocomplete
+                            size='small'
+                            disabled={false}
+                            options={movementOptionsData}
+                            getOptionLabel={(option): string => {
+                                return option.label;
+                            }}
+                            onChange={(event, newValue): void => {
+                                setSelectedMovementFour(newValue);
+                            }}
+                            value={selectedMovementFour}
+                            renderInput={(params): JSX.Element => {
+                                return (
+                                    <TextField
+                                        {...params}
+                                        fullWidth
+                                        margin='none'
+                                        variant='filled'
+                                        inputProps={{
+                                            ...params.inputProps,
+                                            autoComplete: 'off'
+                                        }}
+                                    />
+                                );
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            label='reps'
+                            variant='filled'
+                            type='number'
+                            size='small'
+                            fullWidth
+                            value={movementReps?.movementFour}
+                            onChange={(event): void => {
+                                setMovementReps({ ...movementReps, movementFour: Number(event.target.value) });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Autocomplete
+                            size='small'
+                            disabled={false}
+                            options={movementOptionsData}
+                            getOptionLabel={(option): string => {
+                                return option.label;
+                            }}
+                            onChange={(event, newValue): void => {
+                                setSelectedMovementFive(newValue);
+                            }}
+                            value={selectedMovementFive}
+                            renderInput={(params): JSX.Element => {
+                                return (
+                                    <TextField
+                                        {...params}
+                                        fullWidth
+                                        margin='none'
+                                        variant='filled'
+                                        inputProps={{
+                                            ...params.inputProps,
+                                            autoComplete: 'off'
+                                        }}
+                                    />
+                                );
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            label='reps'
+                            variant='filled'
+                            type='number'
+                            size='small'
+                            fullWidth
+                            value={movementReps?.movementFive}
+                            onChange={(event): void => {
+                                setMovementReps({ ...movementReps, movementFive: Number(event.target.value) });
+                            }}
+                        />
                     </Grid>
                 </Grid>
             </DialogContent>

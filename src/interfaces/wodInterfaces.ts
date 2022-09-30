@@ -1,11 +1,11 @@
 import { MovementOptions } from './dataInterfaces';
 
 export interface MovementRepObject {
-    movementOne: number | null;
-    movementTwo: number | null;
-    movementThree: number | null;
-    movementFour: number | null;
-    movementFive: number | null;
+    movementOne: number;
+    movementTwo: number;
+    movementThree: number;
+    movementFour: number;
+    movementFive: number;
 }
 
 export interface WodDetails {
