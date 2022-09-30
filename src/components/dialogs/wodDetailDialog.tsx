@@ -163,7 +163,10 @@ const WodDetailDialog = ({
                             isOptionEqualToValue={(option, value) => {
                                 return option.value === value.value;
                             }}
-                            onChange={(event, newValue): void => {
+                            onChange={(event, newValue, reason): void => {
+                                if (reason === 'clear') {
+                                    setMovementReps({ ...movementReps, movementOne: 0 });
+                                }
                                 setSelectedMovementOne(newValue);
                             }}
                             value={selectedMovementOne}
@@ -204,7 +207,10 @@ const WodDetailDialog = ({
                             getOptionLabel={(option): string => {
                                 return option.label;
                             }}
-                            onChange={(event, newValue): void => {
+                            onChange={(event, newValue, reason): void => {
+                                if (reason === 'clear') {
+                                    setMovementReps({ ...movementReps, movementTwo: 0 });
+                                }
                                 setSelectedMovementTwo(newValue);
                             }}
                             value={selectedMovementTwo}
@@ -245,7 +251,10 @@ const WodDetailDialog = ({
                             getOptionLabel={(option): string => {
                                 return option.label;
                             }}
-                            onChange={(event, newValue): void => {
+                            onChange={(event, newValue, reason): void => {
+                                if (reason === 'clear') {
+                                    setMovementReps({ ...movementReps, movementThree: 0 });
+                                }
                                 setSelectedMovementThree(newValue);
                             }}
                             value={selectedMovementThree}
@@ -286,7 +295,10 @@ const WodDetailDialog = ({
                             getOptionLabel={(option): string => {
                                 return option.label;
                             }}
-                            onChange={(event, newValue): void => {
+                            onChange={(event, newValue, reason): void => {
+                                if (reason === 'clear') {
+                                    setMovementReps({ ...movementReps, movementFour: 0 });
+                                }
                                 setSelectedMovementFour(newValue);
                             }}
                             value={selectedMovementFour}
@@ -327,7 +339,10 @@ const WodDetailDialog = ({
                             getOptionLabel={(option): string => {
                                 return option.label;
                             }}
-                            onChange={(event, newValue): void => {
+                            onChange={(event, newValue, reason): void => {
+                                if (reason === 'clear') {
+                                    setMovementReps({ ...movementReps, movementFive: 0 });
+                                }
                                 setSelectedMovementFive(newValue);
                             }}
                             value={selectedMovementFive}
