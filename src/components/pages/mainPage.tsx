@@ -22,14 +22,17 @@ const StyledGrid = styled(Grid)(() => {
 });
 
 const MainPage = (): JSX.Element => {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+    const [wodId, setWodId] = useState<number>(0);
 
-    const handleCardClick = () => {
+    const handleCardClick = (id: number) => {
         setIsDialogOpen(true);
+        setWodId(id);
     };
 
     const handleDialogClose = () => {
         setIsDialogOpen(false);
+        setWodId(0);
     };
 
     return (
@@ -41,6 +44,7 @@ const MainPage = (): JSX.Element => {
                 isDialogOpen
                 && (
                     <WodDetailDialog
+                        wodId={wodId}
                         isDialogOpen={isDialogOpen}
                         handleDialogClose={handleDialogClose}
                     />

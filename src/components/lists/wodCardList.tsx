@@ -6,7 +6,7 @@ import WodCard from '../cards/wodCard';
 const WodCardList = ({
     handleCardClick
 }: {
-    handleCardClick: () => void;
+    handleCardClick: (id: number) => void;
 }): JSX.Element => {
     return (
         <Grid container>
@@ -20,7 +20,10 @@ const WodCardList = ({
                             xs={12}
                             data-testid={`wodCard-${index}-container`}
                         >
-                            <WodCard handleCardClick={handleCardClick} />
+                            <WodCard
+                                handleCardClick={handleCardClick}
+                                id={index + 1}
+                            />
                         </Grid>
                     );
                 })
