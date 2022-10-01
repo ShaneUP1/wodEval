@@ -1,3 +1,4 @@
+import { PriorityType } from '../helpers/enums';
 import { MovementOptions } from './dataInterfaces';
 
 export interface MovementRepObject {
@@ -9,6 +10,7 @@ export interface MovementRepObject {
 }
 
 export interface WodDetails {
+    priority: PriorityType | null,
     movementOne: {
         type: MovementOptions | null,
         reps: number

@@ -18,6 +18,7 @@ import { movementOptionsData } from '../../helpers/hardcodedData';
 import { MovementOptions } from '../../interfaces/dataInterfaces';
 import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
 import { getWodFromStorage } from '../../helpers/dataUtils';
+import { PriorityType } from '../../helpers/enums';
 
 const movementRepInitialState = {
     movementOne: 0,
@@ -28,6 +29,7 @@ const movementRepInitialState = {
 };
 
 const wodDetailsInitialState = JSON.stringify({
+    priority: null,
     movementOne: {
         type: null,
         reps: 0
@@ -59,13 +61,14 @@ const WodDetailDialog = ({
     isDialogOpen: boolean;
     handleDialogClose: () => void;
 }) => {
+    const [isFormError, setIsFormError] = useState(false);
     const [selectedMovementOne, setSelectedMovementOne] = useState<MovementOptions | null>(null);
     const [selectedMovementTwo, setSelectedMovementTwo] = useState<MovementOptions | null>(null);
     const [selectedMovementThree, setSelectedMovementThree] = useState<MovementOptions | null>(null);
     const [selectedMovementFour, setSelectedMovementFour] = useState<MovementOptions | null>(null);
     const [selectedMovementFive, setSelectedMovementFive] = useState<MovementOptions | null>(null);
     const [movementReps, setMovementReps] = useState<MovementRepObject>(movementRepInitialState);
-    const [selectedPriorityType, setSelectedPriorityType] = useState<string>('');
+    const [selectedPriorityType, setSelectedPriorityType] = useState<PriorityType | null>(null);
     const [wodDetails, setWodDetails] = useState<WodDetails | null>(null);
 
     useEffect(() => {
@@ -82,6 +85,7 @@ const WodDetailDialog = ({
 
     useEffect(() => {
         if (wodDetails) {
+            setSelectedPriorityType(wodDetails.priority);
             setSelectedMovementOne(wodDetails.movementOne.type);
             setSelectedMovementTwo(wodDetails.movementTwo.type);
             setSelectedMovementThree(wodDetails.movementThree.type);
@@ -97,9 +101,22 @@ const WodDetailDialog = ({
         }
     }, [wodDetails]);
 
+    useEffect(() => {
+        setIsFormError(
+            !!(((selectedMovementOne && !movementReps.movementOne)
+        || (selectedMovementTwo && !movementReps.movementTwo)
+        || (selectedMovementThree && !movementReps.movementThree)
+        || (selectedMovementFour && !movementReps.movementFour)
+        || (selectedMovementFive && !movementReps.movementFive)
+        || !selectedPriorityType
+            ))
+        );
+    }, [movementReps.movementFive, movementReps.movementFour, movementReps.movementOne, movementReps.movementThree, movementReps.movementTwo, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementThree, selectedMovementTwo, selectedPriorityType]);
+
     const handleSave = () => {
         const formattedWodDetails = JSON.stringify({
             ...wodDetails,
+            priority: selectedPriorityType,
             movementOne: {
                 type: selectedMovementOne,
                 reps: movementReps.movementOne
@@ -139,15 +156,18 @@ const WodDetailDialog = ({
                             <InputLabel id='wod-priority-type-label'>Time or Task Priority</InputLabel>
                             <Select
                                 labelId='wod-priority-type-label'
-                                value={selectedPriorityType}
+                                value={selectedPriorityType || ''}
                                 onChange={(event): void => {
-                                    setSelectedPriorityType(event.target.value);
+                                    const newValue = event.target.value === PriorityType.Task
+                                        ? PriorityType.Task
+                                        : PriorityType.Time;
+                                    setSelectedPriorityType(newValue);
                                 }}
                                 label='Time or Task Priority'
                             >
                                 <MenuItem value='' />
-                                <MenuItem value='task'>Task</MenuItem>
-                                <MenuItem value='time'>Time</MenuItem>
+                                <MenuItem value={PriorityType.Task}>Task</MenuItem>
+                                <MenuItem value={PriorityType.Time}>Time</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -193,10 +213,12 @@ const WodDetailDialog = ({
                             type='number'
                             size='small'
                             fullWidth
+                            error={!!selectedMovementOne && !movementReps.movementOne}
                             value={movementReps?.movementOne}
                             onChange={(event): void => {
                                 setMovementReps({ ...movementReps, movementOne: Number(event.target.value) });
                             }}
+                            InputProps={{ inputProps: { max: 10000, min: 0 } }}
                         />
                     </Grid>
                     <Grid item xs={8}>
@@ -206,6 +228,9 @@ const WodDetailDialog = ({
                             options={movementOptionsData}
                             getOptionLabel={(option): string => {
                                 return option.label;
+                            }}
+                            isOptionEqualToValue={(option, value) => {
+                                return option.value === value.value;
                             }}
                             onChange={(event, newValue, reason): void => {
                                 if (reason === 'clear') {
@@ -237,10 +262,12 @@ const WodDetailDialog = ({
                             type='number'
                             size='small'
                             fullWidth
+                            error={!!selectedMovementTwo && !movementReps.movementTwo}
                             value={movementReps?.movementTwo}
                             onChange={(event): void => {
                                 setMovementReps({ ...movementReps, movementTwo: Number(event.target.value) });
                             }}
+                            InputProps={{ inputProps: { max: 10000, min: 0 } }}
                         />
                     </Grid>
                     <Grid item xs={8}>
@@ -250,6 +277,9 @@ const WodDetailDialog = ({
                             options={movementOptionsData}
                             getOptionLabel={(option): string => {
                                 return option.label;
+                            }}
+                            isOptionEqualToValue={(option, value) => {
+                                return option.value === value.value;
                             }}
                             onChange={(event, newValue, reason): void => {
                                 if (reason === 'clear') {
@@ -281,10 +311,12 @@ const WodDetailDialog = ({
                             type='number'
                             size='small'
                             fullWidth
+                            error={!!selectedMovementThree && !movementReps.movementThree}
                             value={movementReps?.movementThree}
                             onChange={(event): void => {
                                 setMovementReps({ ...movementReps, movementThree: Number(event.target.value) });
                             }}
+                            InputProps={{ inputProps: { max: 10000, min: 0 } }}
                         />
                     </Grid>
                     <Grid item xs={8}>
@@ -294,6 +326,9 @@ const WodDetailDialog = ({
                             options={movementOptionsData}
                             getOptionLabel={(option): string => {
                                 return option.label;
+                            }}
+                            isOptionEqualToValue={(option, value) => {
+                                return option.value === value.value;
                             }}
                             onChange={(event, newValue, reason): void => {
                                 if (reason === 'clear') {
@@ -325,10 +360,12 @@ const WodDetailDialog = ({
                             type='number'
                             size='small'
                             fullWidth
+                            error={!!selectedMovementFour && !movementReps.movementFour}
                             value={movementReps?.movementFour}
                             onChange={(event): void => {
                                 setMovementReps({ ...movementReps, movementFour: Number(event.target.value) });
                             }}
+                            InputProps={{ inputProps: { max: 10000, min: 0 } }}
                         />
                     </Grid>
                     <Grid item xs={8}>
@@ -338,6 +375,9 @@ const WodDetailDialog = ({
                             options={movementOptionsData}
                             getOptionLabel={(option): string => {
                                 return option.label;
+                            }}
+                            isOptionEqualToValue={(option, value) => {
+                                return option.value === value.value;
                             }}
                             onChange={(event, newValue, reason): void => {
                                 if (reason === 'clear') {
@@ -369,17 +409,19 @@ const WodDetailDialog = ({
                             type='number'
                             size='small'
                             fullWidth
+                            error={!!selectedMovementFive && !movementReps.movementFive}
                             value={movementReps?.movementFive}
                             onChange={(event): void => {
                                 setMovementReps({ ...movementReps, movementFive: Number(event.target.value) });
                             }}
+                            InputProps={{ inputProps: { max: 10000, min: 0 } }}
                         />
                     </Grid>
                 </Grid>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleDialogClose}>Close</Button>
-                <Button onClick={handleSave}>Save</Button>
+                <Button onClick={handleSave} disabled={isFormError}>Save</Button>
             </DialogActions>
         </Dialog>
     );
