@@ -17,6 +17,11 @@ export enum MovementPattern {
     Swing = 'swing'
 }
 
+export enum PriorityType {
+    Time = 'time',
+    Task = 'task'
+}
+
 export enum SquatType {
     BackSquat = 'back squat',
     FrontSquat = 'front squat',
