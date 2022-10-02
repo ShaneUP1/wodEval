@@ -17,7 +17,7 @@ import {
 import { movementOptionsData } from '../../helpers/hardcodedData';
 import { MovementOptions } from '../../interfaces/dataInterfaces';
 import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
-import { getWodFromStorage } from '../../helpers/dataUtils';
+import { getFromStorage } from '../../helpers/dataUtils';
 import { PriorityType } from '../../helpers/enums';
 
 const movementRepInitialState = {
@@ -73,9 +73,9 @@ const WodDetailDialog = ({
 
     useEffect(() => {
         const wodKey = `wod ${wodId}`;
-        if (localStorage.getItem(wodKey)) {
+        const wodDetailsFromStorage = getFromStorage(wodKey);
+        if (wodDetailsFromStorage) {
             // if there are wodDetails in storage, get them and set them as local state
-            const wodDetailsFromStorage = getWodFromStorage(wodKey);
             setWodDetails(wodDetailsFromStorage);
         } else {
             // else create initial wod details in storage
@@ -145,7 +145,11 @@ const WodDetailDialog = ({
     return (
         <Dialog
             open={isDialogOpen}
-            onClose={() => { handleDialogClose(); }}
+            onClose={(event, reason) => {
+                if (reason !== 'backdropClick') {
+                    handleDialogClose();
+                }
+            }}
             fullWidth
         >
             <DialogTitle>Workout Details</DialogTitle>
@@ -153,7 +157,7 @@ const WodDetailDialog = ({
                 <Grid container spacing={1} paddingTop='8px'>
                     <Grid item xs={12}>
                         <FormControl fullWidth size='small'>
-                            <InputLabel id='wod-priority-type-label'>Time or Task Priority</InputLabel>
+                            <InputLabel id='wod-priority-type-label' required>Time or Task Priority</InputLabel>
                             <Select
                                 labelId='wod-priority-type-label'
                                 value={selectedPriorityType || ''}
@@ -197,6 +201,7 @@ const WodDetailDialog = ({
                                         fullWidth
                                         margin='none'
                                         variant='filled'
+                                        label='Select a movement'
                                         inputProps={{
                                             ...params.inputProps,
                                             autoComplete: 'off'
@@ -246,6 +251,7 @@ const WodDetailDialog = ({
                                         fullWidth
                                         margin='none'
                                         variant='filled'
+                                        label='Select a movement'
                                         inputProps={{
                                             ...params.inputProps,
                                             autoComplete: 'off'
@@ -295,6 +301,7 @@ const WodDetailDialog = ({
                                         fullWidth
                                         margin='none'
                                         variant='filled'
+                                        label='Select a movement'
                                         inputProps={{
                                             ...params.inputProps,
                                             autoComplete: 'off'
@@ -344,6 +351,7 @@ const WodDetailDialog = ({
                                         fullWidth
                                         margin='none'
                                         variant='filled'
+                                        label='Select a movement'
                                         inputProps={{
                                             ...params.inputProps,
                                             autoComplete: 'off'
@@ -393,6 +401,7 @@ const WodDetailDialog = ({
                                         fullWidth
                                         margin='none'
                                         variant='filled'
+                                        label='Select a movement'
                                         inputProps={{
                                             ...params.inputProps,
                                             autoComplete: 'off'
