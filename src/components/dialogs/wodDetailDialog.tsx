@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 import {
     Autocomplete,
     Button,
@@ -11,7 +12,8 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    TextField
+    TextField,
+    Typography
 } from '@mui/material';
 
 import { movementOptionsData } from '../../helpers/hardcodedData';
@@ -28,6 +30,20 @@ const movementRepInitialState = {
     movementFour: 0,
     movementFive: 0
 };
+
+const classesPrefix = 'wodDetailDialog';
+
+const classes = {
+    timeTaskInput: `${classesPrefix}-timeTaskInput`
+};
+
+const StyledDialog = styled(Dialog)(() => {
+    return {
+        [`& .${classes.timeTaskInput}`]: {
+            margin: '8px 8px 0 0'
+        }
+    };
+});
 
 const WodDetailDialog = ({
     wodId,
@@ -48,6 +64,8 @@ const WodDetailDialog = ({
     const [selectedMovementFive, setSelectedMovementFive] = useState<MovementOptions | null>(null);
     const [movementReps, setMovementReps] = useState<MovementRepObject>(movementRepInitialState);
     const [selectedPriorityType, setSelectedPriorityType] = useState<PriorityType | null>(null);
+    const [selectedRounds, setSelectedRounds] = useState<number>(0);
+    const [selectedTime, setSelectedTime] = useState<number>(0);
 
     const wodDetails = useTypedSelector((state) => { return state.wod[wodId]; });
 
@@ -59,6 +77,8 @@ const WodDetailDialog = ({
             setSelectedMovementFour(wodDetails.movementFour.type);
             setSelectedMovementFive(wodDetails.movementFive.type);
             setSelectedPriorityType(wodDetails.priority);
+            setSelectedRounds(wodDetails.rounds);
+            setSelectedTime(wodDetails.time);
             setMovementReps({
                 movementOne: wodDetails.movementOne.reps,
                 movementTwo: wodDetails.movementTwo.reps,
@@ -71,21 +91,25 @@ const WodDetailDialog = ({
 
     useEffect(() => {
         setIsFormError(
-            !!(((selectedMovementOne && !movementReps.movementOne) ||
+            !!((selectedMovementOne && !movementReps.movementOne) ||
         (selectedMovementTwo && !movementReps.movementTwo) ||
         (selectedMovementThree && !movementReps.movementThree) ||
         (selectedMovementFour && !movementReps.movementFour) ||
         (selectedMovementFive && !movementReps.movementFive) ||
+        (selectedPriorityType === PriorityType.Time && !selectedRounds) ||
+        (selectedPriorityType === PriorityType.Task && !selectedTime) ||
         !selectedPriorityType
-            ))
+            )
         );
-    }, [movementReps.movementFive, movementReps.movementFour, movementReps.movementOne, movementReps.movementThree, movementReps.movementTwo, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementThree, selectedMovementTwo, selectedPriorityType]);
+    }, [movementReps.movementFive, movementReps.movementFour, movementReps.movementOne, movementReps.movementThree, movementReps.movementTwo, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime]);
 
     const handleSave = () => {
         const formattedWodDetails = {
             ...wodDetails,
             id: wodId,
             priority: selectedPriorityType,
+            rounds: selectedPriorityType === PriorityType.Time ? selectedRounds : 0,
+            time: selectedPriorityType === PriorityType.Task ? selectedTime : 0,
             movementOne: {
                 type: selectedMovementOne,
                 reps: movementReps.movementOne
@@ -112,7 +136,7 @@ const WodDetailDialog = ({
     };
 
     return (
-        <Dialog
+        <StyledDialog
             open={isDialogOpen}
             onClose={(event, reason) => {
                 if (reason !== 'backdropClick') {
@@ -143,7 +167,43 @@ const WodDetailDialog = ({
                                 <MenuItem value={PriorityType.Time}>Time</MenuItem>
                             </Select>
                         </FormControl>
-
+                        {
+                            selectedPriorityType === PriorityType.Time && (
+                                <TextField
+                                    label='rounds'
+                                    variant='filled'
+                                    type='number'
+                                    size='small'
+                                    classes={{ root: classes.timeTaskInput }}
+                                    error={selectedPriorityType === PriorityType.Time && !selectedRounds}
+                                    value={selectedRounds}
+                                    onChange={(event): void => {
+                                        setSelectedRounds(Number(event.target.value));
+                                    }}
+                                    InputProps={{ inputProps: { max: 100, min: 1 } }}
+                                />
+                            )
+                        }
+                        {
+                            selectedPriorityType === PriorityType.Task && (
+                                <Grid container item display='flex' alignItems='flex-end'>
+                                    <TextField
+                                        label='minutes'
+                                        variant='filled'
+                                        type='number'
+                                        size='small'
+                                        classes={{ root: classes.timeTaskInput }}
+                                        error={selectedPriorityType === PriorityType.Task && !selectedTime}
+                                        value={selectedTime}
+                                        onChange={(event): void => {
+                                            setSelectedTime(Number(event.target.value));
+                                        }}
+                                        InputProps={{ inputProps: { max: 100, min: 1 } }}
+                                    />
+                                    <Typography variant='body1'>AMRAP:</Typography>
+                                </Grid>
+                            )
+                        }
                     </Grid>
                     <Grid item xs={8}>
                         <Autocomplete
@@ -401,7 +461,7 @@ const WodDetailDialog = ({
                 <Button onClick={handleDialogClose}>Close</Button>
                 <Button onClick={handleSave} disabled={isFormError}>Save</Button>
             </DialogActions>
-        </Dialog>
+        </StyledDialog>
     );
 };
 

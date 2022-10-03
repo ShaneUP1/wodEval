@@ -12,6 +12,8 @@ export interface MovementRepObject {
 export interface WodDetails {
     id: number,
     priority: PriorityType | null,
+    rounds: number,
+    time: number,
     movementOne: {
         type: MovementOptions | null,
         reps: number
