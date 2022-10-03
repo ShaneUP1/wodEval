@@ -18,7 +18,7 @@ const WodCardList = ({
                             key={index}
                             item
                             xs={12}
-                            data-testid={`wodCard-${index}-container`}
+                            data-testid={`wodCard-${index + 1}-container`}
                         >
                             <WodCard
                                 handleCardClick={handleCardClick}

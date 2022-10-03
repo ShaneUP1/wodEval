@@ -107,6 +107,18 @@
         "react/jsx-props-no-spreading": "off",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
-        "max-len": "off"
+        "max-len": "off",
+        "react/no-unused-prop-types": "warn",
+        "react/require-default-props": 0,
+        "operator-linebreak": [
+            "error",
+            "after",
+            {
+                "overrides": {
+                    "?": "ignore",
+                    ":": "ignore"
+                }
+            }
+        ]
     }
 }

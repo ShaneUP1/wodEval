@@ -41,8 +41,8 @@ const MainPage = (): JSX.Element => {
                 <WodCardList handleCardClick={handleCardClick} />
             </Grid>
             {
-                isDialogOpen
-                && (
+                isDialogOpen &&
+                (
                     <WodDetailDialog
                         wodId={wodId}
                         isDialogOpen={isDialogOpen}
