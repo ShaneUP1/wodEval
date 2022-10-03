@@ -15,10 +15,11 @@ import {
 } from '@mui/material';
 
 import { movementOptionsData } from '../../helpers/hardcodedData';
-import { MovementOptions } from '../../interfaces/dataInterfaces';
-import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
-import { getFromStorage } from '../../helpers/dataUtils';
 import { PriorityType } from '../../helpers/enums';
+import { MovementOptions } from '../../interfaces/dataInterfaces';
+import { MovementRepObject } from '../../interfaces/wodInterfaces';
+import { useTypedDispatch, useTypedSelector } from '../../app/hooks';
+import { updateWodDetails } from '../../features/wod/wodSlice';
 
 const movementRepInitialState = {
     movementOne: 0,
@@ -33,10 +34,12 @@ const WodDetailDialog = ({
     isDialogOpen,
     handleDialogClose
 }: {
-    wodId: number | null;
+    wodId: number;
     isDialogOpen: boolean;
     handleDialogClose: () => void;
 }) => {
+    const dispatch = useTypedDispatch();
+
     const [isFormError, setIsFormError] = useState(false);
     const [selectedMovementOne, setSelectedMovementOne] = useState<MovementOptions | null>(null);
     const [selectedMovementTwo, setSelectedMovementTwo] = useState<MovementOptions | null>(null);
@@ -45,25 +48,17 @@ const WodDetailDialog = ({
     const [selectedMovementFive, setSelectedMovementFive] = useState<MovementOptions | null>(null);
     const [movementReps, setMovementReps] = useState<MovementRepObject>(movementRepInitialState);
     const [selectedPriorityType, setSelectedPriorityType] = useState<PriorityType | null>(null);
-    const [wodDetails, setWodDetails] = useState<WodDetails | null>(null);
 
-    useEffect(() => {
-        const wodKey = `wod ${wodId}`;
-        const wodDetailsFromStorage = getFromStorage(wodKey);
-        if (wodDetailsFromStorage) {
-            // if there are wodDetails in storage, get them and set them as local state
-            setWodDetails(wodDetailsFromStorage);
-        }
-    }, [wodId]);
+    const wodDetails = useTypedSelector((state) => { return state.wod[wodId]; });
 
     useEffect(() => {
         if (wodDetails) {
-            setSelectedPriorityType(wodDetails.priority);
             setSelectedMovementOne(wodDetails.movementOne.type);
             setSelectedMovementTwo(wodDetails.movementTwo.type);
             setSelectedMovementThree(wodDetails.movementThree.type);
             setSelectedMovementFour(wodDetails.movementFour.type);
             setSelectedMovementFive(wodDetails.movementFive.type);
+            setSelectedPriorityType(wodDetails.priority);
             setMovementReps({
                 movementOne: wodDetails.movementOne.reps,
                 movementTwo: wodDetails.movementTwo.reps,
@@ -87,8 +82,9 @@ const WodDetailDialog = ({
     }, [movementReps.movementFive, movementReps.movementFour, movementReps.movementOne, movementReps.movementThree, movementReps.movementTwo, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementThree, selectedMovementTwo, selectedPriorityType]);
 
     const handleSave = () => {
-        const formattedWodDetails = JSON.stringify({
+        const formattedWodDetails = {
             ...wodDetails,
+            id: wodId,
             priority: selectedPriorityType,
             movementOne: {
                 type: selectedMovementOne,
@@ -110,8 +106,8 @@ const WodDetailDialog = ({
                 type: selectedMovementFive,
                 reps: movementReps.movementFive
             }
-        });
-        localStorage.setItem(`wod ${wodId}`, formattedWodDetails);
+        };
+        dispatch(updateWodDetails(formattedWodDetails));
         handleDialogClose();
     };
 
