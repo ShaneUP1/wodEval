@@ -28,30 +28,6 @@ const movementRepInitialState = {
     movementFive: 0
 };
 
-const wodDetailsInitialState = JSON.stringify({
-    priority: null,
-    movementOne: {
-        type: null,
-        reps: 0
-    },
-    movementTwo: {
-        type: null,
-        reps: 0
-    },
-    movementThree: {
-        type: null,
-        reps: 0
-    },
-    movementFour: {
-        type: null,
-        reps: 0
-    },
-    movementFive: {
-        type: null,
-        reps: 0
-    }
-});
-
 const WodDetailDialog = ({
     wodId,
     isDialogOpen,
@@ -77,9 +53,6 @@ const WodDetailDialog = ({
         if (wodDetailsFromStorage) {
             // if there are wodDetails in storage, get them and set them as local state
             setWodDetails(wodDetailsFromStorage);
-        } else {
-            // else create initial wod details in storage
-            localStorage.setItem(`wod ${wodId}`, wodDetailsInitialState);
         }
     }, [wodId]);
 
@@ -103,12 +76,12 @@ const WodDetailDialog = ({
 
     useEffect(() => {
         setIsFormError(
-            !!(((selectedMovementOne && !movementReps.movementOne)
-        || (selectedMovementTwo && !movementReps.movementTwo)
-        || (selectedMovementThree && !movementReps.movementThree)
-        || (selectedMovementFour && !movementReps.movementFour)
-        || (selectedMovementFive && !movementReps.movementFive)
-        || !selectedPriorityType
+            !!(((selectedMovementOne && !movementReps.movementOne) ||
+        (selectedMovementTwo && !movementReps.movementTwo) ||
+        (selectedMovementThree && !movementReps.movementThree) ||
+        (selectedMovementFour && !movementReps.movementFour) ||
+        (selectedMovementFive && !movementReps.movementFive) ||
+        !selectedPriorityType
             ))
         );
     }, [movementReps.movementFive, movementReps.movementFour, movementReps.movementOne, movementReps.movementThree, movementReps.movementTwo, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementThree, selectedMovementTwo, selectedPriorityType]);
