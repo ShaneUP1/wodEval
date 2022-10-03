@@ -10,6 +10,7 @@ export interface MovementRepObject {
 }
 
 export interface WodDetails {
+    id: number,
     priority: PriorityType | null,
     movementOne: {
         type: MovementOptions | null,
