@@ -10,7 +10,7 @@ import LabelValuePair from '../labels/labelValuePair';
 const classesPrefix = 'wodCard';
 
 const classes = {
-    card: `${classesPrefix}`
+    card: `${classesPrefix}-card`
 };
 
 const StyledCard = styled(Card)(() => {
