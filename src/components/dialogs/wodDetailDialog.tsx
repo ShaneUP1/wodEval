@@ -18,10 +18,10 @@ import {
 
 import { movementOptionsData } from '../../helpers/hardcodedData';
 import { PriorityType } from '../../helpers/enums';
+import { updateWodStorageState } from '../../helpers/dataUtils';
 import { MovementOptions } from '../../interfaces/dataInterfaces';
-import { MovementRepObject } from '../../interfaces/wodInterfaces';
-import { useTypedDispatch, useTypedSelector } from '../../app/hooks';
-import { updateWodDetails } from '../../features/wod/wodSlice';
+import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
+import { useTypedSelector } from '../../app/hooks';
 
 const movementRepInitialState = {
     movementOne: 0,
@@ -54,8 +54,6 @@ const WodDetailDialog = ({
     isDialogOpen: boolean;
     handleDialogClose: () => void;
 }) => {
-    const dispatch = useTypedDispatch();
-
     const [isFormError, setIsFormError] = useState(false);
     const [selectedMovementOne, setSelectedMovementOne] = useState<MovementOptions | null>(null);
     const [selectedMovementTwo, setSelectedMovementTwo] = useState<MovementOptions | null>(null);
@@ -105,7 +103,6 @@ const WodDetailDialog = ({
 
     const handleSave = () => {
         const formattedWodDetails = {
-            ...wodDetails,
             id: wodId,
             priority: selectedPriorityType,
             rounds: selectedPriorityType === PriorityType.Time ? selectedRounds : 0,
@@ -131,7 +128,24 @@ const WodDetailDialog = ({
                 reps: movementReps.movementFive
             }
         };
-        dispatch(updateWodDetails(formattedWodDetails));
+        // grab existing data from storage and parse it
+        const dataInStorage = JSON.parse(localStorage.getItem('Wods Data') || 'null');
+        // check if specific wod data is there
+        const prevWodDataIndex = dataInStorage?.findIndex((data: WodDetails) => { return data.id === wodId; });
+
+        if (prevWodDataIndex && prevWodDataIndex !== -1) {
+            // if wod data is already in storage, replace it with new data
+            dataInStorage[prevWodDataIndex] = formattedWodDetails;
+            updateWodStorageState(dataInStorage);
+        } else if (dataInStorage) {
+            // if there is dataInStorage but not for this wod, create it and keep old data
+            const updatedStateDetails = [...dataInStorage, formattedWodDetails];
+            updateWodStorageState(updatedStateDetails);
+        } else {
+            // otherwise create storage object for state
+            const updatedStateDetails = [formattedWodDetails];
+            updateWodStorageState(updatedStateDetails);
+        }
         handleDialogClose();
     };
 
