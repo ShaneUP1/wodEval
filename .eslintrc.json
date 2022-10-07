@@ -91,11 +91,14 @@
         "react/function-component-definition": [
             2,
             {
-              "namedComponents": "arrow-function",
-              "unnamedComponents": "arrow-function"
+                "namedComponents": "arrow-function",
+                "unnamedComponents": "arrow-function"
             }
-          ],
-        "arrow-body-style": ["error", "always"],
+        ],
+        "arrow-body-style": [
+            "error",
+            "always"
+        ],
         "no-undef": "off",
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": [
@@ -125,6 +128,16 @@
             {
                 "props": false
             }
+        ],
+        "object-curly-newline": [
+            "warn",
+            {
+                "consistent": true
+            }
+        ],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "warn"
         ]
     }
 }

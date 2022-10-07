@@ -34,6 +34,7 @@ const MainPage = (): JSX.Element => {
 
     useEffect(() => {
         const wodDataInStorage = fetchWodStorageState();
+
         if (wodDataInStorage.length) {
             wodDataInStorage.map((wodData: WodDetails) => {
                 return dispatch(updateWodDetails(wodData));
