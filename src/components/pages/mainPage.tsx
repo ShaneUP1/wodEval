@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, styled } from '@mui/material';
+
+import { WodDetails } from '../../interfaces/wodInterfaces';
+import { useTypedDispatch } from '../../app/hooks';
+import { updateWodDetails } from '../../features/wod/wodSlice';
 import WodCardList from '../lists/wodCardList';
 import WodDetailDialog from '../dialogs/wodDetailDialog';
+import { fetchWodStorageState } from '../../helpers/dataUtils';
 
 const classesPrefix = 'mainPage';
 
@@ -22,8 +27,20 @@ const StyledGrid = styled(Grid)(() => {
 });
 
 const MainPage = (): JSX.Element => {
+    const dispatch = useTypedDispatch();
+
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [wodId, setWodId] = useState<number>(0);
+
+    useEffect(() => {
+        const wodDataInStorage = fetchWodStorageState();
+
+        if (wodDataInStorage.length) {
+            wodDataInStorage.map((wodData: WodDetails) => {
+                return dispatch(updateWodDetails(wodData));
+            });
+        }
+    }, [dispatch, wodId]);
 
     const handleCardClick = (id: number) => {
         setIsDialogOpen(true);

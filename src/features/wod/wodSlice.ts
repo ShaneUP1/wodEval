@@ -11,14 +11,11 @@ const wodSlice = createSlice({
     reducers: {
         updateWodDetails: (state, action: PayloadAction<WodDetails>) => {
             state[action.payload.id] = action.payload;
-            // state.movementOne = action.payload.movementOne;
-            // state.movementTwo = action.payload.movementTwo;
-            // state.movementThree = action.payload.movementThree;
-            // state.movementFour = action.payload.movementFour;
-            // state.movementFive = action.payload.movementFive;
         }
     }
 });
 
-export const { updateWodDetails } = wodSlice.actions;
+export const {
+    updateWodDetails
+} = wodSlice.actions;
 export default wodSlice.reducer;
