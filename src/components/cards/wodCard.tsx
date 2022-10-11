@@ -4,22 +4,29 @@ import {
     Card, Grid, Typography
 } from '@mui/material';
 
+import { PriorityType } from '../../helpers/enums';
 import { useTypedSelector } from '../../app/hooks';
 import LabelValuePair from '../labels/labelValuePair';
 
 const classesPrefix = 'wodCard';
 
 const classes = {
-    card: `${classesPrefix}-card`
+    card: `${classesPrefix}-card`,
+    title: `${classesPrefix}-title`
 };
 
 const StyledCard = styled(Card)(() => {
     return {
         [`&.${classes.card}`]: {
-            height: '100%',
+            padding: '8px',
+            height: '165px',
             ':hover': {
                 cursor: 'pointer'
-            }
+            },
+            overflowY: 'auto'
+        },
+        [`& .${classes.title}`]: {
+            paddingBottom: '8px'
         }
     };
 });
@@ -36,6 +43,23 @@ const WodCard = ({
     const renderWodDetailsSection = (): JSX.Element => {
         return (
             <>
+                <Grid item xs={12}>
+                    {
+                        wodDetails?.priority === PriorityType.Task && (
+                            <Typography>
+                                {`${wodDetails.time} minute AMRAP:`}
+                            </Typography>
+                        )
+                    }
+                    {
+                        wodDetails?.priority === PriorityType.Time && (
+                            <Typography>
+                                {`${wodDetails.rounds} rounds for time:`}
+                            </Typography>
+
+                        )
+                    }
+                </Grid>
                 <Grid item xs={12}>
                     {
                         wodDetails?.movementOne?.type?.label &&
@@ -73,8 +97,8 @@ const WodCard = ({
     return (
         <StyledCard className={classes.card} onClick={() => { handleCardClick(id); }}>
             <Grid container display='flex' flexDirection='column'>
-                <Typography variant='h5'>
-                    Wod Name
+                <Typography variant='h5' className={classes.title}>
+                    {`Day ${id}`}
                 </Typography>
                 {renderWodDetailsSection()}
             </Grid>

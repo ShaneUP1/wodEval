@@ -126,7 +126,7 @@ const WodDetailDialog = ({
     }, [selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, wodId]);
 
     useEffect(() => {
-        // if there are details in the store, set local values
+        // if there are details in the store, update dialog values
         if (wodDetails) {
             setSelectedMovementOne(wodDetails.movementOne.type);
             setSelectedMovementTwo(wodDetails.movementTwo.type);
@@ -144,20 +144,20 @@ const WodDetailDialog = ({
                 movementFive: wodDetails.movementFive.reps
             });
         } else {
+            // if there are no details in the store, initialize details
             dispatch(updateWodDetails({ ...wodDetailsInitialState, id: wodId }));
         }
     }, [dispatch, wodDetails, wodId]);
 
     useEffect(() => {
-        // checks that a movement exist if a rep value has been selected and a rep value exist if a movement has been selected
+        // checks that rep values and movement values are in sync
         const isSelectionError = (movementValue: MovementOptions | null, repValue: number) => {
             return !!((movementValue && !repValue) || (!movementValue && repValue));
         };
-        // checks to make sure the form can be saved
-        const selectedMovementValues = [selectedMovementOne, selectedMovementTwo, selectedMovementThree, selectedMovementFour, selectedMovementFive];
-        const isAMovementSelected = !!selectedMovementValues.find((movementValue) => { return movementValue; });
 
         // checks that all necessary fields are completed
+        const selectedMovementValues = [selectedMovementOne, selectedMovementTwo, selectedMovementThree, selectedMovementFour, selectedMovementFive];
+        const isAMovementSelected = !!selectedMovementValues.find((movementValue) => { return movementValue; });
         const isFormError =
             isSelectionError(selectedMovementOne, selectedMovementReps.movementOne) ||
             isSelectionError(selectedMovementTwo, selectedMovementReps.movementTwo) ||
@@ -170,8 +170,9 @@ const WodDetailDialog = ({
             (!selectedPriorityType && isAMovementSelected) ||
             !selectedPriorityType;
 
-        // checks that form is different than values in store
+        // checks that form has been updated
         const isFormDirty = !isEqual(wodDetails, selectedWodDetails);
+
         // disables/enables save button
         setIsSaveEnabled(!isFormError && isFormDirty);
     }, [selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, selectedWodDetails, wodDetails]);
@@ -187,7 +188,7 @@ const WodDetailDialog = ({
             dataInStorage[prevWodDataIndex] = selectedWodDetails;
             updateWodStorageState(dataInStorage);
         } else if (dataInStorage) {
-            // if there is dataInStorage but not for this wod, create it and keep old data
+            // if there is dataInStorage but not for this specific wod, create it and keep old data
             const updatedStateDetails = [...dataInStorage, selectedWodDetails];
             updateWodStorageState(updatedStateDetails);
         } else {
@@ -200,13 +201,13 @@ const WodDetailDialog = ({
 
     return (
         <StyledDialog
+            fullWidth
             open={isDialogOpen}
             onClose={(event, reason) => {
                 if (reason !== 'backdropClick') {
                     handleDialogClose();
                 }
             }}
-            fullWidth
         >
             <DialogTitle>Workout Details</DialogTitle>
             <DialogContent>

@@ -18,10 +18,13 @@ const classes = {
 const StyledGrid = styled(Grid)(() => {
     return {
         [`&.${classes.pageContainer}`]: {
-            height: '100vh'
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column'
         },
         [`& .${classes.wodCardListContainer}`]: {
-            display: 'flex'
+            flexGrow: 1,
+            overflowY: 'auto'
         }
     };
 });
@@ -33,9 +36,11 @@ const MainPage = (): JSX.Element => {
     const [wodId, setWodId] = useState<number>(0);
 
     useEffect(() => {
+        // check local storage and fetch and wod data that is present
         const wodDataInStorage = fetchWodStorageState();
 
         if (wodDataInStorage.length) {
+            // if there is data in storage, set the details in the store
             wodDataInStorage.map((wodData: WodDetails) => {
                 return dispatch(updateWodDetails(wodData));
             });
