@@ -1,3 +1,8 @@
+export enum HingeType {
+    Deadlift = 'deadlift',
+    SumoDeadlift = 'sumo deadlift'
+}
+
 export enum Modality {
     Gymnastics = 'gymnastics',
     Weightlifting = 'weightlifting',
@@ -17,9 +22,32 @@ export enum MovementPattern {
     Swing = 'swing'
 }
 
+export enum OlyType {
+    Snatch = 'snatch',
+    Clean = 'clean'
+}
+
+export enum PressType {
+    Press = 'press',
+    PushPress = 'pushPress',
+    PushJerk = 'pushJerk',
+    SplitJerk = 'splitJerk',
+    HandstandPushup = 'handstandPushup',
+    Dip = 'dip',
+    Pushup = 'pushup',
+    BenchPress = 'benchPress'
+}
+
 export enum PriorityType {
     Time = 'time',
     Task = 'task'
+}
+
+export enum PullType {
+    Pullup = 'pullup',
+    Chinup = 'chinup',
+    MuscleUp = 'muscleUp',
+    RingRow = 'ringRow'
 }
 
 export enum SquatType {
