@@ -30,6 +30,7 @@ const wodDetailsInitialState = {
     priority: null,
     rounds: 0,
     time: 0,
+    repMax: 0,
     movementOne: {
         type: null,
         reps: 0
@@ -94,6 +95,7 @@ const WodDetailDialog = ({
     const [selectedPriorityType, setSelectedPriorityType] = useState<PriorityType | null>(null);
     const [selectedRounds, setSelectedRounds] = useState<number>(0);
     const [selectedTime, setSelectedTime] = useState<number>(0);
+    const [selectedLoad, setSelectedLoad] = useState<number>(0);
 
     const wodDetails = useTypedSelector((state) => { return state.wod[wodId] as WodDetails; });
     const selectedWodDetails = useMemo(() => {
@@ -102,6 +104,7 @@ const WodDetailDialog = ({
             priority: selectedPriorityType,
             rounds: selectedPriorityType === PriorityType.Time ? selectedRounds : 0,
             time: selectedPriorityType === PriorityType.Task ? selectedTime : 0,
+            repMax: selectedPriorityType === PriorityType.Load ? selectedLoad : 0,
             movementOne: {
                 type: selectedMovementOne,
                 reps: selectedMovementReps.movementOne
@@ -123,7 +126,7 @@ const WodDetailDialog = ({
                 reps: selectedMovementReps.movementFive
             }
         };
-    }, [selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, wodId]);
+    }, [selectedLoad, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, wodId]);
 
     useEffect(() => {
         // if there are details in the store, update dialog values
@@ -136,6 +139,7 @@ const WodDetailDialog = ({
             setSelectedPriorityType(wodDetails.priority);
             setSelectedRounds(wodDetails.rounds);
             setSelectedTime(wodDetails.time);
+            setSelectedLoad(wodDetails.repMax);
             setSelectedMovementReps({
                 movementOne: wodDetails.movementOne.reps,
                 movementTwo: wodDetails.movementTwo.reps,
@@ -166,6 +170,7 @@ const WodDetailDialog = ({
             isSelectionError(selectedMovementFive, selectedMovementReps.movementFive) ||
             (selectedPriorityType === PriorityType.Time && !selectedRounds) ||
             (selectedPriorityType === PriorityType.Task && !selectedTime) ||
+            (selectedPriorityType === PriorityType.Load && !selectedLoad) ||
             (selectedPriorityType && !isAMovementSelected) ||
             (!selectedPriorityType && isAMovementSelected) ||
             !selectedPriorityType;
@@ -175,7 +180,7 @@ const WodDetailDialog = ({
 
         // disables/enables save button
         setIsSaveEnabled(!isFormError && isFormDirty);
-    }, [selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, selectedWodDetails, wodDetails]);
+    }, [selectedLoad, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, selectedWodDetails, wodDetails]);
 
     const handleSave = () => {
         // grab existing data from storage and parse it
@@ -214,21 +219,22 @@ const WodDetailDialog = ({
                 <Grid container spacing={1} paddingTop='8px'>
                     <Grid item xs={12}>
                         <FormControl fullWidth size='small'>
-                            <InputLabel id='wod-priority-type-label' required>Time or Task Priority</InputLabel>
+                            <InputLabel id='wod-priority-type-label' required>WOD Priority</InputLabel>
                             <Select
                                 labelId='wod-priority-type-label'
                                 value={selectedPriorityType || ''}
                                 onChange={(event): void => {
-                                    const newValue = event.target.value === PriorityType.Task
-                                        ? PriorityType.Task
-                                        : PriorityType.Time;
-                                    setSelectedPriorityType(newValue);
+                                    // const newValue = event.target.value === PriorityType.Task
+                                    //     ? PriorityType.Task
+                                    //     : PriorityType.Time;
+                                    setSelectedPriorityType(event.target.value as PriorityType);
                                 }}
-                                label='Time or Task Priority'
+                                label='Set Priority'
                             >
                                 <MenuItem value='' />
                                 <MenuItem value={PriorityType.Task}>Task</MenuItem>
                                 <MenuItem value={PriorityType.Time}>Time</MenuItem>
+                                <MenuItem value={PriorityType.Load}>Load</MenuItem>
                             </Select>
                         </FormControl>
                         {
@@ -265,6 +271,26 @@ const WodDetailDialog = ({
                                         InputProps={{ inputProps: { max: 100, min: 1 } }}
                                     />
                                     <Typography variant='body1'>AMRAP:</Typography>
+                                </Grid>
+                            )
+                        }
+                        {
+                            selectedPriorityType === PriorityType.Load && (
+                                <Grid container item display='flex' alignItems='flex-end'>
+                                    <TextField
+                                        label='reps'
+                                        variant='filled'
+                                        type='number'
+                                        size='small'
+                                        classes={{ root: classes.timeTaskInput }}
+                                        error={selectedPriorityType === PriorityType.Load && !selectedLoad}
+                                        value={selectedLoad}
+                                        onChange={(event): void => {
+                                            setSelectedLoad(Number(event.target.value));
+                                        }}
+                                        InputProps={{ inputProps: { max: 100, min: 1 } }}
+                                    />
+                                    <Typography variant='body1'>RM</Typography>
                                 </Grid>
                             )
                         }

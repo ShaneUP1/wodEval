@@ -1,7 +1,7 @@
 import { PriorityType } from '../helpers/enums';
 import { MovementOptions } from './dataInterfaces';
 
-export interface MovementRepObject {
+export type MovementRepObject = {
     movementOne: number;
     movementTwo: number;
     movementThree: number;
@@ -9,11 +9,12 @@ export interface MovementRepObject {
     movementFive: number;
 }
 
-export interface WodDetails {
+export type WodDetails = {
     id: number,
     priority: PriorityType | null,
     rounds: number,
     time: number,
+    repMax: number,
     movementOne: {
         type: MovementOptions | null,
         reps: number

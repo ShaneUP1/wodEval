@@ -40,25 +40,24 @@ const WodCard = ({
 }): JSX.Element => {
     const wodDetails = useTypedSelector((state) => { return state.wod[id]; });
 
+    const renderPriority = () => {
+        switch (wodDetails.priority) {
+            case PriorityType.Task:
+                return `${wodDetails.time} minute AMRAP:`;
+            case PriorityType.Time:
+                return `${wodDetails.rounds} rounds for time:`;
+            case PriorityType.Load:
+                return `${wodDetails.repMax} RM`;
+            default:
+                return '';
+        }
+    };
+
     const renderWodDetailsSection = (): JSX.Element => {
         return (
             <>
                 <Grid item xs={12}>
-                    {
-                        wodDetails?.priority === PriorityType.Task && (
-                            <Typography>
-                                {`${wodDetails.time} minute AMRAP:`}
-                            </Typography>
-                        )
-                    }
-                    {
-                        wodDetails?.priority === PriorityType.Time && (
-                            <Typography>
-                                {`${wodDetails.rounds} rounds for time:`}
-                            </Typography>
-
-                        )
-                    }
+                    {wodDetails && renderPriority()}
                 </Grid>
                 <Grid item xs={12}>
                     {
