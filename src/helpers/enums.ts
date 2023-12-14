@@ -1,6 +1,6 @@
 export enum HingeType {
     Deadlift = 'deadlift',
-    SumoDeadlift = 'sumo deadlift'
+    SumoDeadlift = 'sumoDeadlift'
 }
 
 export enum Modality {
@@ -34,30 +34,31 @@ export enum PressType {
     SplitJerk = 'splitJerk',
     HandstandPushup = 'handstandPushup',
     Dip = 'dip',
-    Pushup = 'pushup',
+    Pushup = 'pushUp',
     BenchPress = 'benchPress'
 }
 
 export enum PriorityType {
     Time = 'time',
-    Task = 'task'
+    Task = 'task',
+    Load = 'load'
 }
 
 export enum PullType {
-    Pullup = 'pullup',
-    Chinup = 'chinup',
+    Pullup = 'pullUp',
+    Chinup = 'chinUp',
     MuscleUp = 'muscleUp',
     RingRow = 'ringRow'
 }
 
 export enum SquatType {
-    BackSquat = 'back squat',
-    FrontSquat = 'front squat',
-    OverheadSquat = 'overhead squat',
-    AirSquat = 'air squat',
+    BackSquat = 'backSquat',
+    FrontSquat = 'frontSquat',
+    OverheadSquat = 'overheadSquat',
+    AirSquat = 'airSquat',
     Pistol = 'pistol',
     Lunge = 'lunge',
-    StepUp = 'step up'
+    StepUp = 'stepUp'
 }
 
 export enum TimeDomain {

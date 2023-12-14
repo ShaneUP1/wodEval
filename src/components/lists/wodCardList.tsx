@@ -11,7 +11,7 @@ const WodCardList = ({
     return (
         <Grid container>
             {
-                Array.from(new Array(6)).map((val, index: number) => {
+                Array.from(new Array(7)).map((val, index: number) => {
                     return (
                         <Grid
                             // eslint-disable-next-line react/no-array-index-key
