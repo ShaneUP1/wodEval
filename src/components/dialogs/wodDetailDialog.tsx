@@ -23,7 +23,7 @@ import { updateWodStorageState } from '../../helpers/dataUtils';
 import { MovementOptions } from '../../interfaces/dataInterfaces';
 import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
 import { useTypedDispatch, useTypedSelector } from '../../app/hooks';
-import { updateWodDetails } from '../../features/wod/wodSlice';
+import { useWodData } from '../../features/wod/store';
 
 const wodDetailsInitialState = {
     id: 0,
@@ -76,138 +76,92 @@ const StyledDialog = styled(Dialog)(() => {
 
 const WodDetailDialog = ({
     wodId,
-    isDialogOpen,
     handleDialogClose
 }: {
     wodId: number;
-    isDialogOpen: boolean;
     handleDialogClose: () => void;
 }) => {
-    const dispatch = useTypedDispatch();
+    const { wods, updateWodDetails } = useWodData();
+    const wodDetails = wods[wodId];
 
     const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-    const [selectedMovementOne, setSelectedMovementOne] = useState<MovementOptions | null>(null);
-    const [selectedMovementTwo, setSelectedMovementTwo] = useState<MovementOptions | null>(null);
-    const [selectedMovementThree, setSelectedMovementThree] = useState<MovementOptions | null>(null);
-    const [selectedMovementFour, setSelectedMovementFour] = useState<MovementOptions | null>(null);
-    const [selectedMovementFive, setSelectedMovementFive] = useState<MovementOptions | null>(null);
-    const [selectedMovementReps, setSelectedMovementReps] = useState<MovementRepObject>(movementRepInitialState);
-    const [selectedPriorityType, setSelectedPriorityType] = useState<PriorityType | null>(null);
-    const [selectedRounds, setSelectedRounds] = useState<number>(0);
-    const [selectedTime, setSelectedTime] = useState<number>(0);
-    const [selectedLoad, setSelectedLoad] = useState<number>(0);
-
-    const wodDetails = useTypedSelector((state) => { return state.wod[wodId] as WodDetails; });
-    const selectedWodDetails = useMemo(() => {
-        return {
-            id: wodId,
-            priority: selectedPriorityType,
-            rounds: selectedPriorityType === PriorityType.Time ? selectedRounds : 0,
-            time: selectedPriorityType === PriorityType.Task ? selectedTime : 0,
-            repMax: selectedPriorityType === PriorityType.Load ? selectedLoad : 0,
-            movementOne: {
-                type: selectedMovementOne,
-                reps: selectedMovementReps.movementOne
-            },
-            movementTwo: {
-                type: selectedMovementTwo,
-                reps: selectedMovementReps.movementTwo
-            },
-            movementThree: {
-                type: selectedMovementThree,
-                reps: selectedMovementReps.movementThree
-            },
-            movementFour: {
-                type: selectedMovementFour,
-                reps: selectedMovementReps.movementFour
-            },
-            movementFive: {
-                type: selectedMovementFive,
-                reps: selectedMovementReps.movementFive
-            }
-        };
-    }, [selectedLoad, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, wodId]);
+    const [localWodDetails, setLocalWodDetails] = useState<WodDetails>({
+        id: 0,
+        priority: null,
+        rounds: 0,
+        time: 0,
+        repMax: 0,
+        movementOne: {
+            type: null,
+            reps: 0
+        },
+        movementTwo: {
+            type: null,
+            reps: 0
+        },
+        movementThree: {
+            type: null,
+            reps: 0
+        },
+        movementFour: {
+            type: null,
+            reps: 0
+        },
+        movementFive: {
+            type: null,
+            reps: 0
+        }
+    });
 
     useEffect(() => {
-        // if there are details in the store, update dialog values
         if (wodDetails) {
-            setSelectedMovementOne(wodDetails.movementOne.type);
-            setSelectedMovementTwo(wodDetails.movementTwo.type);
-            setSelectedMovementThree(wodDetails.movementThree.type);
-            setSelectedMovementFour(wodDetails.movementFour.type);
-            setSelectedMovementFive(wodDetails.movementFive.type);
-            setSelectedPriorityType(wodDetails.priority);
-            setSelectedRounds(wodDetails.rounds);
-            setSelectedTime(wodDetails.time);
-            setSelectedLoad(wodDetails.repMax);
-            setSelectedMovementReps({
-                movementOne: wodDetails.movementOne.reps,
-                movementTwo: wodDetails.movementTwo.reps,
-                movementThree: wodDetails.movementThree.reps,
-                movementFour: wodDetails.movementFour.reps,
-                movementFive: wodDetails.movementFive.reps
-            });
+            setLocalWodDetails({ ...wodDetails });
         } else {
             // if there are no details in the store, initialize details
-            dispatch(updateWodDetails({ ...wodDetailsInitialState, id: wodId }));
+            // dispatch(updateWodDetails({ ...wodDetailsInitialState, id: wodId }));
+            updateWodDetails({ ...wodDetailsInitialState, id: wodId });
         }
-    }, [dispatch, wodDetails, wodId]);
+    }, [updateWodDetails, wodDetails, wodId]);
 
-    useEffect(() => {
-        // checks that rep values and movement values are in sync
-        const isSelectionError = (movementValue: MovementOptions | null, repValue: number) => {
-            return !!((movementValue && !repValue) || (!movementValue && repValue));
-        };
+    // useEffect(() => {
+    //     // checks that rep values and movement values are in sync
+    //     const isSelectionError = (movementValue: MovementOptions | null, repValue: number) => {
+    //         return !!((movementValue && !repValue) || (!movementValue && repValue));
+    //     };
 
-        // checks that all necessary fields are completed
-        const selectedMovementValues = [selectedMovementOne, selectedMovementTwo, selectedMovementThree, selectedMovementFour, selectedMovementFive];
-        const isAMovementSelected = !!selectedMovementValues.find((movementValue) => { return movementValue; });
-        const isFormError =
-            isSelectionError(selectedMovementOne, selectedMovementReps.movementOne) ||
-            isSelectionError(selectedMovementTwo, selectedMovementReps.movementTwo) ||
-            isSelectionError(selectedMovementThree, selectedMovementReps.movementThree) ||
-            isSelectionError(selectedMovementFour, selectedMovementReps.movementFour) ||
-            isSelectionError(selectedMovementFive, selectedMovementReps.movementFive) ||
-            (selectedPriorityType === PriorityType.Time && !selectedRounds) ||
-            (selectedPriorityType === PriorityType.Task && !selectedTime) ||
-            (selectedPriorityType === PriorityType.Load && !selectedLoad) ||
-            (selectedPriorityType && !isAMovementSelected) ||
-            (!selectedPriorityType && isAMovementSelected) ||
-            !selectedPriorityType;
+    //     // checks that all necessary fields are completed
+    //     const selectedMovementValues = [selectedMovementOne, selectedMovementTwo, selectedMovementThree, selectedMovementFour, selectedMovementFive];
+    //     const isAMovementSelected = !!selectedMovementValues.find((movementValue) => { return movementValue; });
+    //     const isFormError =
+    //         isSelectionError(selectedMovementOne, selectedMovementReps.movementOne) ||
+    //         isSelectionError(selectedMovementTwo, selectedMovementReps.movementTwo) ||
+    //         isSelectionError(selectedMovementThree, selectedMovementReps.movementThree) ||
+    //         isSelectionError(selectedMovementFour, selectedMovementReps.movementFour) ||
+    //         isSelectionError(selectedMovementFive, selectedMovementReps.movementFive) ||
+    //         (selectedPriorityType === PriorityType.Time && !selectedRounds) ||
+    //         (selectedPriorityType === PriorityType.Task && !selectedTime) ||
+    //         (selectedPriorityType === PriorityType.Load && !selectedLoad) ||
+    //         (selectedPriorityType && !isAMovementSelected) ||
+    //         (!selectedPriorityType && isAMovementSelected) ||
+    //         !selectedPriorityType;
 
-        // checks that form has been updated
-        const isFormDirty = !isEqual(wodDetails, selectedWodDetails);
+    //     // checks that form has been updated
+    //     const isFormDirty = !isEqual(wodDetails, selectedWodDetails);
 
-        // disables/enables save button
-        setIsSaveEnabled(!isFormError && isFormDirty);
-    }, [selectedLoad, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, selectedWodDetails, wodDetails]);
+    //     // disables/enables save button
+    //     setIsSaveEnabled(!isFormError && isFormDirty);
+    // }, [selectedLoad, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, selectedWodDetails, wodDetails]);
 
     const handleSave = () => {
-        // grab existing data from storage and parse it
-        const dataInStorage = JSON.parse(localStorage.getItem('Wods Data') || 'null');
-        // check if specific wod data is there
-        const prevWodDataIndex = dataInStorage?.findIndex((data: WodDetails) => { return data.id === wodId; });
-
-        if (prevWodDataIndex >= 0) {
-            // if wod data is already in storage, replace it with new data
-            dataInStorage[prevWodDataIndex] = selectedWodDetails;
-            updateWodStorageState(dataInStorage);
-        } else if (dataInStorage) {
-            // if there is dataInStorage but not for this specific wod, create it and keep old data
-            const updatedStateDetails = [...dataInStorage, selectedWodDetails];
-            updateWodStorageState(updatedStateDetails);
-        } else {
-            // otherwise create storage object for state
-            const updatedStateDetails = [selectedWodDetails];
-            updateWodStorageState(updatedStateDetails);
-        }
+        console.log('localWodDetails in handleSave', localWodDetails);
+        updateWodDetails(localWodDetails);
         handleDialogClose();
     };
 
     return (
         <StyledDialog
             fullWidth
-            open={isDialogOpen}
+            open={!!wodId}
             onClose={(event, reason) => {
                 if (reason !== 'backdropClick') {
                     handleDialogClose();
@@ -222,12 +176,9 @@ const WodDetailDialog = ({
                             <InputLabel id='wod-priority-type-label' required>WOD Priority</InputLabel>
                             <Select
                                 labelId='wod-priority-type-label'
-                                value={selectedPriorityType || ''}
+                                value={localWodDetails.priority || ''}
                                 onChange={(event): void => {
-                                    // const newValue = event.target.value === PriorityType.Task
-                                    //     ? PriorityType.Task
-                                    //     : PriorityType.Time;
-                                    setSelectedPriorityType(event.target.value as PriorityType);
+                                    setLocalWodDetails({ ...localWodDetails, priority: event.target.value as PriorityType });
                                 }}
                                 label='Set Priority'
                             >
@@ -238,24 +189,24 @@ const WodDetailDialog = ({
                             </Select>
                         </FormControl>
                         {
-                            selectedPriorityType === PriorityType.Time && (
+                            localWodDetails.priority === PriorityType.Time && (
                                 <TextField
                                     label='rounds'
                                     variant='filled'
                                     type='number'
                                     size='small'
                                     classes={{ root: classes.timeTaskInput }}
-                                    error={selectedPriorityType === PriorityType.Time && !selectedRounds}
-                                    value={selectedRounds}
+                                    error={localWodDetails.priority === PriorityType.Time && !localWodDetails.rounds}
+                                    value={localWodDetails.rounds}
                                     onChange={(event): void => {
-                                        setSelectedRounds(Number(event.target.value));
+                                        setLocalWodDetails({ ...localWodDetails, rounds: Number(event.target.value) });
                                     }}
                                     InputProps={{ inputProps: { max: 100, min: 1 } }}
                                 />
                             )
                         }
                         {
-                            selectedPriorityType === PriorityType.Task && (
+                            localWodDetails.priority === PriorityType.Task && (
                                 <Grid container item display='flex' alignItems='flex-end'>
                                     <TextField
                                         label='minutes'
@@ -263,10 +214,10 @@ const WodDetailDialog = ({
                                         type='number'
                                         size='small'
                                         classes={{ root: classes.timeTaskInput }}
-                                        error={selectedPriorityType === PriorityType.Task && !selectedTime}
-                                        value={selectedTime}
+                                        error={localWodDetails.priority === PriorityType.Task && !localWodDetails.time}
+                                        value={localWodDetails.time}
                                         onChange={(event): void => {
-                                            setSelectedTime(Number(event.target.value));
+                                            setLocalWodDetails({ ...localWodDetails, time: Number(event.target.value) });
                                         }}
                                         InputProps={{ inputProps: { max: 100, min: 1 } }}
                                     />
@@ -275,7 +226,7 @@ const WodDetailDialog = ({
                             )
                         }
                         {
-                            selectedPriorityType === PriorityType.Load && (
+                            localWodDetails.priority === PriorityType.Load && (
                                 <Grid container item display='flex' alignItems='flex-end'>
                                     <TextField
                                         label='reps'
@@ -283,10 +234,10 @@ const WodDetailDialog = ({
                                         type='number'
                                         size='small'
                                         classes={{ root: classes.timeTaskInput }}
-                                        error={selectedPriorityType === PriorityType.Load && !selectedLoad}
-                                        value={selectedLoad}
+                                        error={localWodDetails.priority === PriorityType.Load && !localWodDetails.repMax}
+                                        value={localWodDetails.repMax}
                                         onChange={(event): void => {
-                                            setSelectedLoad(Number(event.target.value));
+                                            setLocalWodDetails({ ...localWodDetails, repMax: Number(event.target.value) });
                                         }}
                                         InputProps={{ inputProps: { max: 100, min: 1 } }}
                                     />
@@ -308,11 +259,19 @@ const WodDetailDialog = ({
                             }}
                             onChange={(event, newValue, reason): void => {
                                 if (reason === 'clear') {
-                                    setSelectedMovementReps({ ...selectedMovementReps, movementOne: 0 });
+                                    setLocalWodDetails({ ...localWodDetails,
+                                        movementOne: {
+                                            ...localWodDetails.movementOne,
+                                            reps: 0
+                                        } });
                                 }
-                                setSelectedMovementOne(newValue);
+                                setLocalWodDetails({ ...localWodDetails,
+                                    movementOne: {
+                                        ...localWodDetails.movementOne,
+                                        type: newValue
+                                    } });
                             }}
-                            value={selectedMovementOne}
+                            value={localWodDetails.movementOne.type}
                             renderInput={(params): JSX.Element => {
                                 return (
                                     <TextField
@@ -337,15 +296,19 @@ const WodDetailDialog = ({
                             type='number'
                             size='small'
                             fullWidth
-                            error={!!selectedMovementOne && !selectedMovementReps.movementOne}
-                            value={selectedMovementReps.movementOne}
+                            error={!!localWodDetails.movementOne.type && !localWodDetails.movementOne.reps}
+                            value={localWodDetails.movementOne.reps}
                             onChange={(event): void => {
-                                setSelectedMovementReps({ ...selectedMovementReps, movementOne: Number(event.target.value) });
+                                setLocalWodDetails({ ...localWodDetails,
+                                    movementOne: {
+                                        ...localWodDetails.movementOne,
+                                        reps: Number(event.target.value)
+                                    } });
                             }}
                             InputProps={{ inputProps: { max: 10000, min: 0 } }}
                         />
                     </Grid>
-                    <Grid item xs={8}>
+                    {/* <Grid item xs={8}>
                         <Autocomplete
                             size='small'
                             disabled={false}
@@ -544,12 +507,12 @@ const WodDetailDialog = ({
                             }}
                             InputProps={{ inputProps: { max: 10000, min: 0 } }}
                         />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleDialogClose}>Close</Button>
-                <Button onClick={handleSave} disabled={!isSaveEnabled}>Save</Button>
+                <Button onClick={handleSave} disabled={false}>Save</Button>
             </DialogActions>
         </StyledDialog>
     );

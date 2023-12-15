@@ -3,10 +3,9 @@ import { Grid, styled } from '@mui/material';
 
 import { WodDetails } from '../../interfaces/wodInterfaces';
 import { useTypedDispatch } from '../../app/hooks';
-import { updateWodDetails } from '../../features/wod/wodSlice';
+
 import WodCardList from '../lists/wodCardList';
 import WodDetailDialog from '../dialogs/wodDetailDialog';
-import { fetchWodStorageState } from '../../helpers/dataUtils';
 
 const classesPrefix = 'mainPage';
 
@@ -30,48 +29,28 @@ const StyledGrid = styled(Grid)(() => {
 });
 
 const MainPage = (): JSX.Element => {
-    const dispatch = useTypedDispatch();
+    // useEffect(() => {
+    //     // check local storage and fetch any wod data that is present
+    //     const wodDataInStorage = fetchWodStorageState();
 
-    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-    const [wodId, setWodId] = useState<number>(0);
+    //     if (wodDataInStorage.length) {
+    //         // if there is data in storage, set the details in the store
+    //         wodDataInStorage.map((wodData: WodDetails) => {
+    //             return dispatch(updateWodDetails(wodData));
+    //         });
+    //     }
+    // }, [dispatch, wodId]);
 
-    useEffect(() => {
-        // check local storage and fetch and wod data that is present
-        const wodDataInStorage = fetchWodStorageState();
-
-        if (wodDataInStorage.length) {
-            // if there is data in storage, set the details in the store
-            wodDataInStorage.map((wodData: WodDetails) => {
-                return dispatch(updateWodDetails(wodData));
-            });
-        }
-    }, [dispatch, wodId]);
-
-    const handleCardClick = (id: number) => {
-        setIsDialogOpen(true);
-        setWodId(id);
-    };
-
-    const handleDialogClose = () => {
-        setIsDialogOpen(false);
-        setWodId(0);
-    };
+    // const handleCardClick = (id: number) => {
+    //     setIsDialogOpen(true);
+    //     setWodId(id);
+    // };
 
     return (
         <StyledGrid container className={classes.pageContainer}>
             <Grid item xs={4} className={classes.wodCardListContainer}>
-                <WodCardList handleCardClick={handleCardClick} />
+                <WodCardList />
             </Grid>
-            {
-                isDialogOpen &&
-                (
-                    <WodDetailDialog
-                        wodId={wodId}
-                        isDialogOpen={isDialogOpen}
-                        handleDialogClose={handleDialogClose}
-                    />
-                )
-            }
         </StyledGrid>
     );
 };
