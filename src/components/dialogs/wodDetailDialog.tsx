@@ -86,7 +86,7 @@ const WodDetailDialog = ({
 
     const [isSaveEnabled, setIsSaveEnabled] = useState(false);
     const [localWodDetails, setLocalWodDetails] = useState<WodDetails>({
-        id: 0,
+        id: wodId,
         priority: null,
         rounds: 0,
         time: 0,
@@ -119,9 +119,9 @@ const WodDetailDialog = ({
         } else {
             // if there are no details in the store, initialize details
             // dispatch(updateWodDetails({ ...wodDetailsInitialState, id: wodId }));
-            updateWodDetails({ ...wodDetailsInitialState, id: wodId });
+            // updateWodDetails({ ...wodDetailsInitialState, id: wodId });
         }
-    }, [updateWodDetails, wodDetails, wodId]);
+    }, [wodDetails, wodId]);
 
     // useEffect(() => {
     //     // checks that rep values and movement values are in sync
@@ -176,13 +176,16 @@ const WodDetailDialog = ({
                             <InputLabel id='wod-priority-type-label' required>WOD Priority</InputLabel>
                             <Select
                                 labelId='wod-priority-type-label'
-                                value={localWodDetails.priority || ''}
+                                value={localWodDetails.priority ?? ''}
                                 onChange={(event): void => {
                                     setLocalWodDetails({ ...localWodDetails, priority: event.target.value as PriorityType });
                                 }}
                                 label='Set Priority'
                             >
                                 <MenuItem value='' />
+                                {
+                                    // TODO: iterate through the enum}
+                                }
                                 <MenuItem value={PriorityType.Task}>Task</MenuItem>
                                 <MenuItem value={PriorityType.Time}>Time</MenuItem>
                                 <MenuItem value={PriorityType.Load}>Load</MenuItem>

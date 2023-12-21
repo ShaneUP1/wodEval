@@ -45,7 +45,6 @@ const WodCard = ({
     const wodDetails = wods.find((wod) => {
         return wod.id === id;
     });
-    console.log('wodDetails in wodCard:', wodDetails);
 
     const renderPriority = () => {
         if (!wodDetails) return '';
@@ -69,31 +68,31 @@ const WodCard = ({
                 </Grid>
                 <Grid item xs={12}>
                     {
-                        wodDetails && wodDetails.movementOne?.type?.label &&
+                        wodDetails?.movementOne?.type?.label &&
                         <LabelValuePair label={wodDetails.movementOne.type.label} value={wodDetails.movementOne.reps} />
                     }
                 </Grid>
                 <Grid item xs={12}>
                     {
-                        wodDetails && wodDetails.movementTwo?.type?.label &&
+                        wodDetails?.movementTwo?.type?.label &&
                         <LabelValuePair label={wodDetails.movementTwo.type.label} value={wodDetails.movementTwo.reps} />
                     }
                 </Grid>
                 <Grid item xs={12}>
                     {
-                        wodDetails && wodDetails.movementThree?.type?.label &&
+                        wodDetails?.movementThree?.type?.label &&
                         <LabelValuePair label={wodDetails.movementThree.type.label} value={wodDetails.movementThree.reps} />
                     }
                 </Grid>
                 <Grid item xs={12}>
                     {
-                        wodDetails && wodDetails.movementFour?.type?.label &&
+                        wodDetails?.movementFour?.type?.label &&
                         <LabelValuePair label={wodDetails.movementFour.type.label} value={wodDetails.movementFour.reps} />
                     }
                 </Grid>
                 <Grid item xs={12}>
                     {
-                        wodDetails && wodDetails.movementFive?.type?.label &&
+                        wodDetails?.movementFive?.type?.label &&
                         <LabelValuePair label={wodDetails.movementFive.type.label} value={wodDetails.movementFive.reps} />
                     }
                 </Grid>
@@ -102,10 +101,10 @@ const WodCard = ({
     };
 
     return (
-        <StyledCard className={classes.card} onClick={() => { return handleClick(); }}>
+        <StyledCard className={classes.card} onClick={handleClick}>
             <Grid container display='flex' flexDirection='column'>
                 <Typography variant='h5' className={classes.title}>
-                    {`Day ${id + 1}`}
+                    {`Day ${id}`}
                 </Typography>
                 {renderWodDetailsSection()}
             </Grid>

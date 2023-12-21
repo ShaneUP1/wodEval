@@ -31,6 +31,11 @@ const useWodStore = create<Store>((set) => {
         updateWods: (data) => {
             try {
                 localStorage.setItem('Wods Data', JSON.stringify(data));
+                set(() => {
+                    return {
+                        wods: data
+                    };
+                });
             } catch (e) {
                 console.log(e);
             }
@@ -49,9 +54,7 @@ export const useWodData = () => {
     }
 
     const updateWodDetails = (wod: WodDetails) => {
-        console.log('wod in update store function', wod);
         // if (!isLoaded) return null;
-        console.log('wods in update function', wods);
         const prevWodDataIndex = wods.findIndex((wodInStorage) => {
             return wodInStorage.id === wod.id;
         });

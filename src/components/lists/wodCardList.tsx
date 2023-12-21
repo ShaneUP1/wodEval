@@ -16,7 +16,6 @@ const WodCardList = (): JSX.Element => {
         <Grid container>
             {
                 Array.from(new Array(7)).map((val, index: number) => {
-                    console.log('inside wodCardList array');
                     return (
                         <Grid
                             // eslint-disable-next-line react/no-array-index-key
@@ -26,7 +25,7 @@ const WodCardList = (): JSX.Element => {
                             data-testid={`wodCard-${index}-container`}
                         >
                             <WodCard
-                                id={index}
+                                id={index + 1}
                                 handleClick={() => { return setWodId(index + 1); }}
                             />
                         </Grid>
