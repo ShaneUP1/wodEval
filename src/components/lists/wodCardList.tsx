@@ -7,7 +7,7 @@ import WodDetailDialog from '../dialogs/wodDetailDialog';
 
 const WodCardList = (): JSX.Element => {
     const [wodId, setWodId] = useState<number>(0);
-    console.log('wodId in list', wodId);
+
     const handleDialogClose = () => {
         setWodId(0);
     };

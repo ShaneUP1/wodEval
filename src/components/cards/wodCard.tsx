@@ -1,12 +1,12 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import {
     Card, Grid, Typography
 } from '@mui/material';
 
 import { PriorityType } from '../../helpers/enums';
-import LabelValuePair from '../labels/labelValuePair';
 import { useWodData } from '../../features/wod/store';
+import LabelValuePair from '../labels/labelValuePair';
 
 const classesPrefix = 'wodCard';
 
@@ -45,7 +45,8 @@ const WodCard = ({
         return wod.id === id;
     });
 
-    const renderPriority = () => {
+    // Define wod priority label
+    const renderPriority = (): string => {
         if (!wodDetails) return '';
         switch (wodDetails?.priority) {
             case PriorityType.Task:
