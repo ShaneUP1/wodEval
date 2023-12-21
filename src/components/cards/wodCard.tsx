@@ -5,8 +5,8 @@ import {
 } from '@mui/material';
 
 import { PriorityType } from '../../helpers/enums';
-import { useTypedSelector } from '../../app/hooks';
 import LabelValuePair from '../labels/labelValuePair';
+import { useWodData } from '../../features/wod/store';
 
 const classesPrefix = 'wodCard';
 
@@ -32,16 +32,22 @@ const StyledCard = styled(Card)(() => {
 });
 
 const WodCard = ({
-    handleCardClick,
-    id
+    id,
+    handleClick
 }: {
-    handleCardClick: (id: number) => void;
     id: number;
+    handleClick: () => void;
 }): JSX.Element => {
-    const wodDetails = useTypedSelector((state) => { return state.wod[id]; });
+    const { wods } = useWodData();
+
+    // Find wod details from wod list in state
+    const wodDetails = wods.find((wod) => {
+        return wod.id === id;
+    });
 
     const renderPriority = () => {
-        switch (wodDetails.priority) {
+        if (!wodDetails) return '';
+        switch (wodDetails?.priority) {
             case PriorityType.Task:
                 return `${wodDetails.time} minute AMRAP:`;
             case PriorityType.Time:
@@ -94,7 +100,7 @@ const WodCard = ({
     };
 
     return (
-        <StyledCard className={classes.card} onClick={() => { handleCardClick(id); }}>
+        <StyledCard className={classes.card} onClick={handleClick}>
             <Grid container display='flex' flexDirection='column'>
                 <Typography variant='h5' className={classes.title}>
                     {`Day ${id}`}
