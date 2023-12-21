@@ -81,7 +81,9 @@ const WodDetailDialog = ({
     handleDialogClose: () => void;
 }) => {
     const { wods, updateWodDetails } = useWodData();
-    const wodDetails = wods[wodId];
+    const wodDetails = wods.find((wod) => {
+        return wod.id === wodId;
+    });
 
     const [isSaveEnabled, setIsSaveEnabled] = useState(false);
     const [localWodDetails, setLocalWodDetails] = useState<WodDetails>({
