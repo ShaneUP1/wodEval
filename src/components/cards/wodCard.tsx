@@ -5,7 +5,6 @@ import {
 } from '@mui/material';
 
 import { PriorityType } from '../../helpers/enums';
-import { useTypedSelector } from '../../app/hooks';
 import LabelValuePair from '../labels/labelValuePair';
 import { useWodData } from '../../features/wod/store';
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Grid, styled } from '@mui/material';
 
 import { WodDetails } from '../../interfaces/wodInterfaces';
-import { useTypedDispatch } from '../../app/hooks';
 
 import WodCardList from '../lists/wodCardList';
 import WodDetailDialog from '../dialogs/wodDetailDialog';

@@ -22,7 +22,6 @@ import { PriorityType } from '../../helpers/enums';
 import { updateWodStorageState } from '../../helpers/dataUtils';
 import { MovementOptions } from '../../interfaces/dataInterfaces';
 import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
-import { useTypedDispatch, useTypedSelector } from '../../app/hooks';
 import { useWodData } from '../../features/wod/store';
 
 const wodDetailsInitialState = {
