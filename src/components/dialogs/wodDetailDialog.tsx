@@ -1,5 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import isEqual from 'lodash.isequal';
+import React, { Fragment, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import {
     Autocomplete,
@@ -18,10 +17,8 @@ import {
 } from '@mui/material';
 
 import { movementOptionsData } from '../../helpers/hardcodedData';
-import { MovementPattern, PriorityType, SquatType } from '../../helpers/enums';
-import { updateWodStorageState } from '../../helpers/dataUtils';
+import { PriorityType } from '../../helpers/enums';
 import { MovementOptions } from '../../interfaces/dataInterfaces';
-import { MovementRepObject, WodDetails } from '../../interfaces/wodInterfaces';
 import { useWodData } from '../../features/wod/store';
 
 const wodDetailsInitialState = {
@@ -51,13 +48,6 @@ const wodDetailsInitialState = {
         reps: 0
     }
 };
-const movementRepInitialState = {
-    movementOne: 0,
-    movementTwo: 0,
-    movementThree: 0,
-    movementFour: 0,
-    movementFive: 0
-};
 
 enum MovementObject {
     movementOne = 0,
@@ -65,6 +55,13 @@ enum MovementObject {
     movementThree = 2,
     movementFour = 3,
     movementFive = 4
+}
+
+type LocalWodMovement = {
+    [key in MovementObject]: {
+        type: MovementOptions | null;
+        reps: number;
+    }
 }
 
 const classesPrefix = 'wodDetailDialog';
@@ -92,22 +89,15 @@ const WodDetailDialog = ({
     const wodDetails = wods.find((wod) => {
         return wod.id === wodId;
     });
-    console.log('wodDetails in dialog', wodDetails);
 
-    const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-    const [localWodDetails, setLocalWodDetails] = useState<any>({
+    const [localWodDetails, setLocalWodDetails] = useState<{ id: number, priority: PriorityType | null, rounds: number, time: number, repMax: number }>({
         id: wodId,
         priority: null,
         rounds: 0,
         time: 0,
         repMax: 0
     });
-    const [localWodMovements, setLocalWodMovements] = useState<{
-        [key in MovementObject]: {
-            type: MovementOptions | null;
-            reps: number;
-        };
-    }>({
+    const [localWodMovements, setLocalWodMovements] = useState<LocalWodMovement>({
         [MovementObject.movementOne]: {
             type: null,
             reps: 0
@@ -129,29 +119,28 @@ const WodDetailDialog = ({
             reps: 0
         }
     });
-    console.log('localWodMovements', localWodMovements);
 
     useEffect(() => {
         if (wodDetails) {
             setLocalWodDetails({ ...wodDetails });
             setLocalWodMovements({
-                0: {
+                [MovementObject.movementOne]: {
                     type: wodDetails.movementOne.type,
                     reps: wodDetails.movementOne.reps
                 },
-                1: {
+                [MovementObject.movementTwo]: {
                     type: wodDetails.movementTwo.type,
                     reps: wodDetails.movementTwo.reps
                 },
-                2: {
+                [MovementObject.movementThree]: {
                     type: wodDetails.movementThree.type,
                     reps: wodDetails.movementThree.reps
                 },
-                3: {
+                [MovementObject.movementFour]: {
                     type: wodDetails.movementFour.type,
                     reps: wodDetails.movementFour.reps
                 },
-                4: {
+                [MovementObject.movementFive]: {
                     type: wodDetails.movementFive.type,
                     reps: wodDetails.movementFive.reps
                 }
@@ -162,34 +151,26 @@ const WodDetailDialog = ({
         }
     }, [updateWodDetails, wodDetails, wodId]);
 
-    // useEffect(() => {
-    //     // checks that rep values and movement values are in sync
-    //     const isSelectionError = (movementValue: MovementOptions | null, repValue: number) => {
-    //         return !!((movementValue && !repValue) || (!movementValue && repValue));
-    //     };
+    const isMovementOptionsDisabled = !localWodDetails.priority ||
+        (localWodDetails.priority === PriorityType.Time && !localWodDetails.rounds) ||
+        (localWodDetails.priority === PriorityType.Task && !localWodDetails.time) ||
+        (localWodDetails.priority === PriorityType.Load && !localWodDetails.repMax);
 
-    //     // checks that all necessary fields are completed
-    //     const selectedMovementValues = [selectedMovementOne, selectedMovementTwo, selectedMovementThree, selectedMovementFour, selectedMovementFive];
-    //     const isAMovementSelected = !!selectedMovementValues.find((movementValue) => { return movementValue; });
-    //     const isFormError =
-    //         isSelectionError(selectedMovementOne, selectedMovementReps.movementOne) ||
-    //         isSelectionError(selectedMovementTwo, selectedMovementReps.movementTwo) ||
-    //         isSelectionError(selectedMovementThree, selectedMovementReps.movementThree) ||
-    //         isSelectionError(selectedMovementFour, selectedMovementReps.movementFour) ||
-    //         isSelectionError(selectedMovementFive, selectedMovementReps.movementFive) ||
-    //         (selectedPriorityType === PriorityType.Time && !selectedRounds) ||
-    //         (selectedPriorityType === PriorityType.Task && !selectedTime) ||
-    //         (selectedPriorityType === PriorityType.Load && !selectedLoad) ||
-    //         (selectedPriorityType && !isAMovementSelected) ||
-    //         (!selectedPriorityType && isAMovementSelected) ||
-    //         !selectedPriorityType;
+    const isWodMovementsDirty = localWodMovements[0].reps !== wodDetails?.movementOne.reps ||
+    localWodMovements[0].type?.value !== wodDetails?.movementOne.type?.value ||
+    localWodMovements[1].reps !== wodDetails.movementTwo.reps ||
+    localWodMovements[1].type?.value !== wodDetails?.movementTwo.type?.value ||
+    localWodMovements[2].reps !== wodDetails.movementThree.reps ||
+    localWodMovements[2].type?.value !== wodDetails?.movementThree.type?.value ||
+    localWodMovements[3].reps !== wodDetails.movementFour.reps ||
+    localWodMovements[3].type?.value !== wodDetails?.movementFour.type?.value ||
+    localWodMovements[4].reps !== wodDetails.movementFive.reps ||
+    localWodMovements[4].type?.value !== wodDetails?.movementFive.type?.value;
 
-    //     // checks that form has been updated
-    //     const isFormDirty = !isEqual(wodDetails, selectedWodDetails);
-
-    //     // disables/enables save button
-    //     setIsSaveEnabled(!isFormError && isFormDirty);
-    // }, [selectedLoad, selectedMovementFive, selectedMovementFour, selectedMovementOne, selectedMovementReps.movementFive, selectedMovementReps.movementFour, selectedMovementReps.movementOne, selectedMovementReps.movementThree, selectedMovementReps.movementTwo, selectedMovementThree, selectedMovementTwo, selectedPriorityType, selectedRounds, selectedTime, selectedWodDetails, wodDetails]);
+    const isFormDirty = localWodDetails.priority !== wodDetails?.priority ||
+    localWodDetails.repMax !== wodDetails.repMax ||
+    localWodDetails.rounds !== wodDetails.rounds ||
+    localWodDetails.time !== wodDetails.time || isWodMovementsDirty;
 
     const handleSave = () => {
         updateWodDetails({
@@ -302,7 +283,7 @@ const WodDetailDialog = ({
                                     <Grid item xs={8}>
                                         <Autocomplete
                                             size='small'
-                                            disabled={false}
+                                            disabled={isMovementOptionsDisabled}
                                             options={movementOptionsData}
                                             getOptionLabel={(option): string => {
                                                 return option.label;
@@ -315,7 +296,7 @@ const WodDetailDialog = ({
                                                     return {
                                                         ...prev,
                                                         [index]: {
-                                                            ...prev[index],
+                                                            reps: reason === 'clear' ? 0 : prev[index].reps,
                                                             type: reason === 'clear' ? null : newValue
                                                         }
                                                     };
@@ -346,6 +327,7 @@ const WodDetailDialog = ({
                                             type='number'
                                             size='small'
                                             fullWidth
+                                            disabled={!localWodMovements[index].type}
                                             // error={!!localWodDetails.movementOne.type && !localWodDetails.movementOne.reps}
                                             value={localWodMovements[index].reps}
                                             onChange={(event): void => {
@@ -370,7 +352,7 @@ const WodDetailDialog = ({
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleDialogClose}>Close</Button>
-                <Button onClick={handleSave} disabled={false}>Save</Button>
+                <Button onClick={handleSave} disabled={!isFormDirty}>Save</Button>
             </DialogActions>
         </StyledDialog>
     );

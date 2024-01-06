@@ -1,6 +1,6 @@
+import { useCallback } from 'react';
 import { create } from 'zustand';
 
-import { useCallback } from 'react';
 import { WodDetails } from '../../interfaces/wodInterfaces';
 
 type Store = {
@@ -54,10 +54,7 @@ export const useWodData = () => {
         getWods();
     }
 
-    console.log('wods in store', wods);
-
     const updateWodDetails = useCallback((wod: WodDetails) => {
-        console.log('inside update', wod);
         // if (!isLoaded) return null;
         const prevWodDataIndex = wods.findIndex((wodInStorage) => {
             return wodInStorage.id === wod.id;
@@ -65,16 +62,13 @@ export const useWodData = () => {
 
         // if wod data is already in storage, replace it with new data
         if (prevWodDataIndex >= 0) {
-            console.log('update first if');
             updateWods(wods);
             wods[prevWodDataIndex] = wod;
         } else if (wods.length) {
-            console.log('update else if');
             // if there is dataInStorage but not for this specific wod, create it and keep old data
             const updatedWodState = [...wods, wod];
             updateWods(updatedWodState);
         } else {
-            console.log('update last else');
             updateWods([wod]);
         }
 
